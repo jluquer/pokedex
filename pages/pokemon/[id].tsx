@@ -111,16 +111,15 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
 // You should use getStaticPaths if you’re statically pre-rendering pages that use dynamic routes
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const pokemonIds = [...Array(151)].map((_, index) => ({
+    params: { id: `${index + 1}` },
+  }));
+
   const { data } = await pokeApi.get<PokemonListResponse>(
     "https://pokeapi.co/api/v2/pokemon?limit=151"
   );
   const pokemonNames = data.results.map((pokemon) => ({
-    params: {
-      id: pokemon.name,
-    },
-  }));
-  const pokemonIds = data.results.map((pokemon) => ({
-    params: { id: pokemon.id.toString() },
+    params: { id: pokemon.name },
   }));
 
   return {
