@@ -5,15 +5,18 @@ import { Button, Card, Container, Grid, Image, Text } from "@nextui-org/react";
 import confetti from "canvas-confetti";
 
 import { Layout } from "../../components/layouts";
-import { Pokemon } from "../../interfaces";
+import { Pokemon, PokemonListResponse } from "../../interfaces";
 import { getPokemonInfo, localFavorites } from "../../utils";
+import { pokeApi } from "../../api";
 
 interface Props {
   pokemon: Pokemon;
 }
 
 const PokemonPage: NextPage<Props> = ({ pokemon }) => {
-  const [isInFavorites, setIsInFavorites] = useState(localFavorites.existInFavorite(pokemon.id));
+  const [isInFavorites, setIsInFavorites] = useState(
+    localFavorites.existInFavorite(pokemon.id)
+  );
   const onToggleFav = () => {
     localFavorites.toggleFavorite(pokemon.id);
     setIsInFavorites(!isInFavorites);
@@ -38,7 +41,10 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
           <Card hoverable css={{ padding: "30px" }}>
             <Card.Body>
               <Card.Image
-                src={pokemon.sprites.other?.dream_world.front_default ?? "/no-image.png"}
+                src={
+                  pokemon.sprites.other?.dream_world.front_default ??
+                  "/no-image.png"
+                }
                 alt={pokemon.name}
                 width="100%"
                 height={200}
@@ -49,12 +55,18 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
 
         <Grid xs={12} sm={8}>
           <Card>
-            <Card.Header css={{ display: "flex", justifyContent: "space-between" }}>
+            <Card.Header
+              css={{ display: "flex", justifyContent: "space-between" }}
+            >
               <Text h1 transform="capitalize">
                 {pokemon.name}
               </Text>
 
-              <Button color="gradient" ghost={!isInFavorites} onClick={onToggleFav}>
+              <Button
+                color="gradient"
+                ghost={!isInFavorites}
+                onClick={onToggleFav}
+              >
                 {isInFavorites ? "En favoritos" : "Guardar en favoritos"}
               </Button>
             </Card.Header>
@@ -98,13 +110,21 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
 
 // You should use getStaticPaths if you’re statically pre-rendering pages that use dynamic routes
 
-export const getStaticPaths: GetStaticPaths = async (ctx) => {
-  const pokemons151 = [...Array(151)].map((value, index) => `${index + 1}`);
+export const getStaticPaths: GetStaticPaths = async () => {
+  const { data } = await pokeApi.get<PokemonListResponse>(
+    "https://pokeapi.co/api/v2/pokemon?limit=151"
+  );
+  const pokemonNames = data.results.map((pokemon) => ({
+    params: {
+      id: pokemon.name,
+    },
+  }));
+  const pokemonIds = data.results.map((pokemon) => ({
+    params: { id: pokemon.id.toString() },
+  }));
 
   return {
-    paths: pokemons151.map((id) => ({
-      params: { id },
-    })),
+    paths: [...pokemonIds, ...pokemonNames],
     fallback: "blocking",
   };
 };
