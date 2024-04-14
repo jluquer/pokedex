@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { Layout } from "../../components/layouts";
-import { NoFavorites } from "../../components/ui";
-import { localFavorites } from "../../utils";
-import { FavoritePokemons } from "../../components/pokemon";
+import { Layout } from '../../components/layouts';
+import { FavoritePokemons } from '../../components/pokemon';
+import { NoFavorites } from '../../components/ui';
+import { localFavorites } from '../../utils';
 
-const FavoritesPage = () => {
+export default function FavoritesPage() {
   const [favoritePokemons, setFavoritePokemons] = useState<number[]>([]);
 
   useEffect(() => {
@@ -13,7 +13,7 @@ const FavoritesPage = () => {
   }, []);
 
   return (
-    <Layout title="Pokémons - Favoritos">
+    <Layout title='Pokémons - Favoritos'>
       {!favoritePokemons.length ? (
         <NoFavorites />
       ) : (
@@ -21,6 +21,4 @@ const FavoritesPage = () => {
       )}
     </Layout>
   );
-};
-
-export default FavoritesPage;
+}

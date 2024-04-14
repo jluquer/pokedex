@@ -1,47 +1,40 @@
-import Image from "next/image";
-import NextLink from "next/link";
-import { Spacer, Text, useTheme, Link } from "@nextui-org/react";
+import Image from 'next/image';
+import { Link } from '@nextui-org/react';
+import { Text } from '@/components/ui';
 
 export const Navbar = () => {
-  const { theme } = useTheme();
-
   return (
-    <div
-      style={{
-        display: "flex",
-        width: "100%",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "start",
-        padding: "0 20px",
-        backgroundColor: theme?.colors.gray900.value,
-      }}
-    >
+    <div className='flex w-full items-center justify-start bg-content1 px-5'>
       <Image
-        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png"
-        alt="icono de la app"
+        src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png'
+        alt='icono de la app'
         width={70}
         height={70}
       />
 
-      <NextLink href="/" passHref>
-        <Link>
-          <Text color="white" h2>
-            P
-          </Text>
-          <Text color="white" h3>
-            okémon
-          </Text>
-        </Link>
-      </NextLink>
+      <Link
+        href='/'
+        className='items-baseline tracking-tighter'
+      >
+        <Text
+          h2
+          className='text-4xl text-white'
+        >
+          P
+        </Text>
+        <Text
+          h3
+          className='text-2xl text-white'
+        >
+          okémon
+        </Text>
+      </Link>
 
-      <Spacer css={{ flex: 1 }} />
+      <div className='flex-1'></div>
 
-      <NextLink href="/favorites" passHref>
-        <Link>
-          <Text color="white">Favoritos</Text>
-        </Link>
-      </NextLink>
+      <Link href='/favorites'>
+        <Text className='text-white'>Favoritos</Text>
+      </Link>
     </div>
   );
 };

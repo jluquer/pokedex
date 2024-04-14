@@ -1,22 +1,28 @@
-import { useState } from "react";
-import { GetStaticProps, NextPage, GetStaticPaths } from "next";
-import { Button, Card, Container, Grid, Image, Text } from "@nextui-org/react";
+import { Button, Card, CardBody, CardHeader, Image } from '@nextui-org/react';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import { useEffect, useState } from 'react';
 
-import confetti from "canvas-confetti";
+import confetti from 'canvas-confetti';
 
-import { Layout } from "../../components/layouts";
-import { Pokemon, PokemonListResponse } from "../../interfaces";
-import { getPokemonInfo, localFavorites } from "../../utils";
-import { pokeApi } from "../../api";
+import { pokeApi } from '@/api';
+import { Layout } from '@/components/layouts';
+import { Pokemon, PokemonListResponse } from '@/interfaces';
+import { getPokemonInfo, localFavorites } from '@/utils';
 
 interface Props {
   pokemon: Pokemon;
 }
 
-const PokemonPage: NextPage<Props> = ({ pokemon }) => {
+export default function PokemonPage({ pokemon }: Props) {
   const [isInFavorites, setIsInFavorites] = useState(
-    localFavorites.existInFavorite(pokemon.id)
+    localFavorites.existInFavorite(pokemon.id),
   );
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
   const onToggleFav = () => {
     localFavorites.toggleFavorite(pokemon.id);
     setIsInFavorites(!isInFavorites);
@@ -36,45 +42,47 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
 
   return (
     <Layout title={pokemon.name}>
-      <Grid.Container css={{ marginTop: "5px" }} gap={2}>
-        <Grid xs={12} sm={4}>
-          <Card hoverable css={{ padding: "30px" }}>
-            <Card.Body>
-              <Card.Image
+      <div className='mt-7 grid w-full grid-cols-1 gap-4 px-8 md:grid-cols-12'>
+        <div className='md:col-span-4'>
+          <Card>
+            <CardBody className='flex items-center justify-center'>
+              <Image
+                className='h-auto max-w-full p-7'
                 src={
                   pokemon.sprites.other?.dream_world.front_default ??
-                  "/no-image.png"
+                  '/no-image.png'
                 }
                 alt={pokemon.name}
-                width="100%"
-                height={200}
               />
-            </Card.Body>
+            </CardBody>
           </Card>
-        </Grid>
+        </div>
 
-        <Grid xs={12} sm={8}>
+        <div className='md:col-span-8 '>
           <Card>
-            <Card.Header
-              css={{ display: "flex", justifyContent: "space-between" }}
-            >
-              <Text h1 transform="capitalize">
-                {pokemon.name}
-              </Text>
+            <CardHeader className='flex justify-between'>
+              <h1 className='capitalize'>{pokemon.name}</h1>
 
-              <Button
-                color="gradient"
-                ghost={!isInFavorites}
-                onClick={onToggleFav}
-              >
-                {isInFavorites ? "En favoritos" : "Guardar en favoritos"}
-              </Button>
-            </Card.Header>
+              {isLoaded && (
+                <Button
+                  variant={!isInFavorites ? 'bordered' : 'solid'}
+                  color='secondary'
+                  className={
+                    isInFavorites
+                      ? 'bg-gradient-to-tr from-secondary to-primary text-white'
+                      : 'text-white'
+                  }
+                  onClick={onToggleFav}
+                >
+                  {isInFavorites ? 'En favoritos' : 'Guardar en favoritos'}
+                </Button>
+              )}
+            </CardHeader>
 
-            <Card.Body>
-              <Text size={30}>Sprites:</Text>
+            <CardBody>
+              <span>Sprites:</span>
 
-              <Container direction="row" display="flex" gap={0}>
+              <div className='flex'>
                 <Image
                   src={pokemon.sprites.front_default}
                   alt={pokemon.name}
@@ -99,14 +107,14 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
                   width={100}
                   height={100}
                 />
-              </Container>
-            </Card.Body>
+              </div>
+            </CardBody>
           </Card>
-        </Grid>
-      </Grid.Container>
+        </div>
+      </div>
     </Layout>
   );
-};
+}
 
 // You should use getStaticPaths if you’re statically pre-rendering pages that use dynamic routes
 
@@ -116,7 +124,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }));
 
   const { data } = await pokeApi.get<PokemonListResponse>(
-    "https://pokeapi.co/api/v2/pokemon?limit=151"
+    'https://pokeapi.co/api/v2/pokemon?limit=151',
   );
   const pokemonNames = data.results.map((pokemon) => ({
     params: { id: pokemon.name },
@@ -124,7 +132,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   return {
     paths: [...pokemonIds, ...pokemonNames],
-    fallback: "blocking",
+    fallback: 'blocking',
   };
 };
 
@@ -133,11 +141,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   const pokemon = await getPokemonInfo(id);
 
-  if (!pokemon) {
+  if (!pokemon)
     return {
       notFound: true,
     };
-  }
 
   return {
     props: {
@@ -146,5 +153,3 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     revalidate: 86400, // 60 * 60 * 24
   };
 };
-
-export default PokemonPage;
