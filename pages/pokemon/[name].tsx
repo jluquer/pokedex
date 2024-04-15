@@ -10,6 +10,35 @@ import { HeartIcon, Text } from '@/components/ui';
 import { Pokemon, PokemonListResponse } from '@/interfaces';
 import { getPokemonInfo, localFavorites } from '@/utils';
 
+// You should use getStaticPaths if you’re statically pre-rendering pages that use dynamic routes
+export const getStaticPaths: GetStaticPaths = async () => {
+  const { data } = await pokeApi.get<PokemonListResponse>(
+    'https://pokeapi.co/api/v2/pokemon?limit=151',
+  );
+  const pokemonNames = data.results.map((pokemon) => ({
+    params: { name: pokemon.name },
+  }));
+
+  return {
+    paths: pokemonNames,
+    fallback: 'blocking',
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const { name } = params as { name: string };
+
+  const pokemon = await getPokemonInfo(name);
+  if (!pokemon) return { notFound: true };
+
+  return {
+    props: {
+      pokemon,
+    },
+    revalidate: 86400, // 60 * 60 * 24
+  };
+};
+
 interface Props {
   pokemon: Pokemon;
 }
@@ -114,41 +143,3 @@ export default function PokemonPage({ pokemon }: Props) {
     </Layout>
   );
 }
-
-// You should use getStaticPaths if you’re statically pre-rendering pages that use dynamic routes
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  const pokemonIds = [...Array(151)].map((_, index) => ({
-    params: { id: `${index + 1}` },
-  }));
-
-  const { data } = await pokeApi.get<PokemonListResponse>(
-    'https://pokeapi.co/api/v2/pokemon?limit=151',
-  );
-  const pokemonNames = data.results.map((pokemon) => ({
-    params: { id: pokemon.name },
-  }));
-
-  return {
-    paths: [...pokemonIds, ...pokemonNames],
-    fallback: 'blocking',
-  };
-};
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { id } = params as { id: string };
-
-  const pokemon = await getPokemonInfo(id);
-
-  if (!pokemon)
-    return {
-      notFound: true,
-    };
-
-  return {
-    props: {
-      pokemon,
-    },
-    revalidate: 86400, // 60 * 60 * 24
-  };
-};
