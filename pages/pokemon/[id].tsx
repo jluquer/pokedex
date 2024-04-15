@@ -16,7 +16,7 @@ interface Props {
 
 export default function PokemonPage({ pokemon }: Props) {
   const [isInFavorites, setIsInFavorites] = useState(
-    localFavorites.existInFavorite(pokemon.id),
+    localFavorites.existInFavorite(pokemon),
   );
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -25,7 +25,7 @@ export default function PokemonPage({ pokemon }: Props) {
   }, []);
 
   const onToggleFav = () => {
-    localFavorites.toggleFavorite(pokemon.id);
+    localFavorites.toggleFavorite(pokemon);
     setIsInFavorites(!isInFavorites);
 
     if (isInFavorites) return;

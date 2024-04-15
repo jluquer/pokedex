@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 
-import { Layout } from '../../components/layouts';
-import { FavoritePokemons } from '../../components/pokemon';
-import { NoFavorites } from '../../components/ui';
-import { localFavorites } from '../../utils';
+import { Layout } from '@/components/layouts';
+import { PokemonsGrid } from '@/components/pokemon';
+import { NoFavorites } from '@/components/ui';
+import { localFavorites } from '@/utils';
+import { SmallPokemon } from '@/interfaces';
 
 export default function FavoritesPage() {
-  const [favoritePokemons, setFavoritePokemons] = useState<number[]>([]);
+  const [favoritePokemons, setFavoritePokemons] = useState<SmallPokemon[]>([]);
 
   useEffect(() => {
     setFavoritePokemons(localFavorites.pokemons());
@@ -17,7 +18,7 @@ export default function FavoritesPage() {
       {!favoritePokemons.length ? (
         <NoFavorites />
       ) : (
-        <FavoritePokemons favoritePokemons={favoritePokemons} />
+        <PokemonsGrid pokemons={favoritePokemons} />
       )}
     </Layout>
   );

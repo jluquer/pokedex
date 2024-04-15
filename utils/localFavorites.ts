@@ -1,5 +1,6 @@
-const pokemons = (): number[] => {
-  if (typeof window === 'undefined') return [];
+import { SmallPokemon, Pokemon } from '@/interfaces';
+
+const pokemons = (): SmallPokemon[] => {
   try {
     return JSON.parse(localStorage.getItem('favorites') ?? '[]');
   } catch (err) {
@@ -7,20 +8,26 @@ const pokemons = (): number[] => {
   }
 };
 
-const toggleFavorite = (id: number) => {
+const toggleFavorite = (pokemon: Pokemon) => {
   let favorites = pokemons();
+  const favorite = convertToSmall(pokemon);
 
-  if (favorites.includes(id)) {
-    favorites = favorites.filter((pokeId) => id !== pokeId);
+  if (favorites.some((p) => p.id === favorite.id)) {
+    favorites = favorites.filter((p) => p.id !== favorite.id);
   } else {
-    favorites.push(id);
+    favorites.push(favorite);
   }
 
   localStorage.setItem('favorites', JSON.stringify(favorites));
 };
 
-const existInFavorite = (id: number): boolean => {
-  return pokemons().includes(id);
+function convertToSmall(pokemon: Pokemon) {
+  const { id, name } = pokemon;
+  return { id, name };
+}
+
+const existInFavorite = (pokemon: SmallPokemon | Pokemon): boolean => {
+  return pokemons().some((p) => p.id === pokemon.id);
 };
 
 const localFavorites = {

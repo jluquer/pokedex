@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 
 import { Card, CardBody, CardFooter, Image } from '@nextui-org/react';
 
-import { SmallPokemon } from '../../interfaces';
+import { SmallPokemon } from '@/interfaces';
 
 interface Props {
   pokemon: SmallPokemon;
@@ -23,7 +23,7 @@ export function PokemonCard({ pokemon }: Props) {
     >
       <CardBody>
         <Image
-          src={pokemon.img}
+          src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemon.id}.svg`}
           alt={pokemon.name}
           width='100%'
           className='h-[140px] w-full'
