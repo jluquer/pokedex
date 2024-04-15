@@ -6,6 +6,7 @@ import confetti from 'canvas-confetti';
 
 import { pokeApi } from '@/api';
 import { Layout } from '@/components/layouts';
+import { HeartIcon, Text } from '@/components/ui';
 import { Pokemon, PokemonListResponse } from '@/interfaces';
 import { getPokemonInfo, localFavorites } from '@/utils';
 
@@ -42,75 +43,73 @@ export default function PokemonPage({ pokemon }: Props) {
 
   return (
     <Layout title={pokemon.name}>
-      <div className='mt-7 grid w-full grid-cols-1 gap-4 px-8 md:grid-cols-12'>
-        <div className='md:col-span-4'>
-          <Card>
-            <CardBody className='flex items-center justify-center'>
+      <div className='mt-7 grid w-full grid-cols-1 grid-rows-1 gap-4 px-8 lg:grid-cols-12'>
+        <Card className='lg:col-span-4'>
+          <CardBody className='flex items-center justify-center p-11'>
+            <Image
+              className='h-[200px] w-full'
+              src={
+                pokemon.sprites.other?.dream_world.front_default ??
+                '/no-image.png'
+              }
+              alt={pokemon.name}
+            />
+          </CardBody>
+        </Card>
+
+        <Card className='px-4 pb-2 pt-4 lg:col-span-8'>
+          <CardHeader className='mb-4 flex justify-between'>
+            <Text
+              h1
+              className='text-5xl capitalize'
+            >
+              {pokemon.name}
+            </Text>
+
+            <Button
+              isIconOnly
+              className='bg-gradient-to-tr from-warning to-danger text-white shadow-lg'
+              aria-label={
+                isInFavorites ? 'Quitar de favoritos' : 'Añadir a favoritos'
+              }
+              isLoading={!isLoaded}
+              onClick={onToggleFav}
+            >
+              <HeartIcon filled={isInFavorites} />
+            </Button>
+          </CardHeader>
+
+          <CardBody>
+            <Text className='text-2xl'>Sprites:</Text>
+
+            <div className='flex justify-around'>
               <Image
-                className='h-auto max-w-full p-7'
-                src={
-                  pokemon.sprites.other?.dream_world.front_default ??
-                  '/no-image.png'
-                }
+                src={pokemon.sprites.front_default}
                 alt={pokemon.name}
+                width={100}
+                height={100}
               />
-            </CardBody>
-          </Card>
-        </div>
-
-        <div className='md:col-span-8 '>
-          <Card>
-            <CardHeader className='flex justify-between'>
-              <h1 className='capitalize'>{pokemon.name}</h1>
-
-              {isLoaded && (
-                <Button
-                  variant={!isInFavorites ? 'bordered' : 'solid'}
-                  color='secondary'
-                  className={
-                    isInFavorites
-                      ? 'bg-gradient-to-tr from-secondary to-primary text-white'
-                      : 'text-white'
-                  }
-                  onClick={onToggleFav}
-                >
-                  {isInFavorites ? 'En favoritos' : 'Guardar en favoritos'}
-                </Button>
-              )}
-            </CardHeader>
-
-            <CardBody>
-              <span>Sprites:</span>
-
-              <div className='flex'>
-                <Image
-                  src={pokemon.sprites.front_default}
-                  alt={pokemon.name}
-                  width={100}
-                  height={100}
-                />
-                <Image
-                  src={pokemon.sprites.back_default}
-                  alt={pokemon.name}
-                  width={100}
-                  height={100}
-                />
-                <Image
-                  src={pokemon.sprites.front_shiny}
-                  alt={pokemon.name}
-                  width={100}
-                  height={100}
-                />
-                <Image
-                  src={pokemon.sprites.back_shiny}
-                  alt={pokemon.name}
-                  width={100}
-                  height={100}
-                />
-              </div>
-            </CardBody>
-          </Card>
-        </div>
+              <Image
+                src={pokemon.sprites.back_default}
+                alt={pokemon.name}
+                width={100}
+                height={100}
+              />
+              <Image
+                src={pokemon.sprites.front_shiny}
+                alt={pokemon.name}
+                width={100}
+                height={100}
+              />
+              <Image
+                src={pokemon.sprites.back_shiny}
+                alt={pokemon.name}
+                width={100}
+                height={100}
+              />
+            </div>
+          </CardBody>
+        </Card>
       </div>
     </Layout>
   );

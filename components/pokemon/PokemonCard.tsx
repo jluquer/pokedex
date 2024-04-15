@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 
-import { Card, CardBody, CardFooter } from '@nextui-org/react';
+import { Card, CardBody, CardFooter, Image } from '@nextui-org/react';
 
 import { SmallPokemon } from '../../interfaces';
 
@@ -26,9 +25,8 @@ export function PokemonCard({ pokemon }: Props) {
         <Image
           src={pokemon.img}
           alt={pokemon.name}
-          width={100}
-          height={140}
-          className='h-[140px] w-full '
+          width='100%'
+          className='h-[140px] w-full'
         />
       </CardBody>
       <CardFooter className='justify-between'>

@@ -1,6 +1,5 @@
-import { Card } from '@nextui-org/react';
+import { Card, Image } from '@nextui-org/react';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 import { FC } from 'react';
 
 interface Props {
@@ -16,14 +15,14 @@ export const FavoriteCardPokemon: FC<Props> = ({ pokemonId }) => {
     <Card
       isHoverable
       isPressable
+      className='flex items-center justify-center p-7'
     >
       <Image
         src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`}
-        width={100}
-        height={150}
         onClick={onFavoriteClicked}
         alt={`Imagen para el pokemon ${pokemonId}`}
-        className='w-full'
+        width='100%'
+        className='h-[150px] w-full'
       />
     </Card>
   );
